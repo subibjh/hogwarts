@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>کلاه گروهبندی | هاگوارتز</title><link rel="stylesheet" href="assets/style.css"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet"><script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>.hat{width:140px;height:110px;margin:0 auto;background:linear-gradient(180deg,#8B5A2B,#5A3315);border-radius:60% 60% 20% 20% / 50% 50% 30% 30%;border:3px solid #0A0A0F;position:relative;box-shadow:0 12px 30px rgba(0,0,0,.4)}.hat:before{content:'';position:absolute;left:12px;right:12px;top:22px;height:14px;background:#0A0A0F;border-radius:10px;opacity:.85}.hat:after{content:'◠ ◠';position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:#0A0A0F;font-size:1rem;letter-spacing:8px;opacity:.7}</style></head><body><canvas id="stars"></canvas>
+<nav><a class="brand" href="index.html"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#E8C547" d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>هاگوارتز</a><div class="navlinks"><a href="index.html" class="keep">تالار</a><a href="sorting.html" class="on">گروهبندی</a><a href="wand.html">چوبدستی</a><a href="characters.html">شخصیتها</a><a href="spells.html">طلسمها</a><a href="books.html">کتابها</a><a href="greathall.html">جام</a><a href="events.html">رویدادها</a><span id="meBadge"></span></div></nav>
+<main><div class="wrap"><section class="block" style="text-align:center">
+<div class="sec-tag">THE SORTING HAT</div><h2 class="sec-title">کلاه گروهبندی</h2><p class="sec-desc" style="margin:0 auto 22px">کلاه را روی سر بگذار — ۸ سؤال سرنوشتت را میگوید</p>
+<div class="hat" id="hat"></div>
+<div class="quizbox" id="quiz" style="margin-top:22px"><div class="sec-tag" id="qStep"></div><h3 id="qQ"></h3><div class="opts" id="qOpts"></div><div class="bar"><i id="qBar" style="width:0%"></i></div><div class="qres" id="qRes"></div></div>
+</section></div></main><footer><div class="en">MISCHIEF MANAGED</div></footer>
+<script src="assets/app.js"></script><script>
+(function(){
+  if(!HW.need(!!HW.S.name,'اول نامت را در تالار ثبت کن'))return;
+  var Q=[
+    {q:'سپیدهدم است، همراهت کیست؟',o:[['شجاعترین دوست',3,0,0,1],['زیرکترین نقشهکش',0,1,3,1],['وفادارترین همراه',1,0,1,3],['راهبلد حیلهگر',0,3,1,0]]},
+    {q:'صدایی در راهروی ممنوعه — چه میکنی؟',o:[['مستقیم میروم',3,0,0,0],['نقشه غارتگر را چک میکنم',0,1,3,0],['دوستانم را خبر میکنم',1,0,0,3],['بیصدا دنبالش میروم',0,3,1,0]]},
+    {q:'محبوبترین درست؟',o:[['دفاع در برابر جادوی سیاه',3,1,0,1],['معجونها',0,3,2,0],['طلسمها',1,1,3,1],['مراقبت از موجودات',0,0,1,3]]},
+    {q:'ساعتبرگردان داشتی؟',o:[['به نبرد تاریخی میرفتم',3,0,0,0],['اختراع آینده را میدزدیدم',0,3,1,0],['در کتابخانه اسکندریه',0,0,3,1],['روزهای خوش با خانواده',1,0,0,3]]},
+    {q:'آینه نفاقانگیز چه نشان میدهد؟',o:[['خودم در اوج افتخار',2,2,0,0],['خودم در اوج دانایی',0,1,3,0],['خانواده شاد',1,0,1,3],['فرمانروای جادو',0,3,0,0]]},
+    {q:'همراه جادوییت؟',o:[['ققنوس',3,0,1,0],['مار شاخدار',0,3,1,0],['هیپوگریف',1,0,3,1],['تک شاخ',0,0,1,3]]},
+    {q:'بزرگترین ترست در جام سهجادوگر؟',o:[['جا زدن',3,0,0,1],['حریف باهوشتر',0,2,3,0],['آسیب به دوستم',1,0,0,3],['باختن',0,3,0,1]]},
+    {q:'کلاه میپرسد: کجا؟',o:[['آنجا که دلیرانند',3,0,0,0],['آنجا که قدرتمندانند',0,3,0,0],['آنجا که دانایانند',0,0,3,0],['آنجا که وفادارانند',0,0,0,3]]}
+  ];
+  var DESC={gryff:'دلیری تو از برج گریفیندور فریاد میزند.',slyth:'ارادهات تو را به سیاهچال اسلیترین میبرد.',raven:'ذهنت متعلق به برج ریونکلاست.',huff:'قلبت در تالار هافلپاف میتپد.'};
+  var qi=0,sc=[0,0,0,0],qStep=document.getElementById('qStep'),qQ=document.getElementById('qQ'),qO=document.getElementById('qOpts'),qR=document.getElementById('qRes'),qBar=document.getElementById('qBar'),hat=document.getElementById('hat');
+  gsap.to(hat,{y:-4,duration:1.8,yoyo:true,repeat:-1,ease:'sine.inOut'});
+  function show(){
+    qR.textContent='';qStep.textContent='سؤال '+(qi+1)+' از '+Q.length;qBar.style.width=Math.round(qi/Q.length*100)+'%';qQ.textContent=Q[qi].q;qO.innerHTML='';
+    Q[qi].o.forEach(function(op){var b=document.createElement('button');b.className='opt';b.textContent=op[0];b.onclick=function(){for(var i=0;i<4;i++)sc[i]+=op[i+1];gsap.to(hat,{rotation: (Math.random()-.5)*6,duration:.2,yoyo:true,repeat:1});qi++;if(qi<Q.length)show();else finish()};qO.appendChild(b)});
+    gsap.fromTo(qQ,{opacity:0,y:8},{opacity:1,y:0,duration:.35});
+  }
+  function finish(){
+    qBar.style.width='100%';var w=0;for(var i=1;i<4;i++)if(sc[i]>sc[w])w=i;
+    var hk=['gryff','slyth','raven','huff'][w];var first=!HW.S.house;HW.S.house=hk;HW.save();HW.renderBadge();
+    if(first) HW.award(hk,10,'گروهبندی');
+    gsap.to(hat,{scale:1.08,duration:.3,yoyo:true,repeat:1,ease:'back.out(1.6)'});
+    qStep.textContent='کلاه فریاد میزند';qQ.textContent='— '+HW.HOUSES[hk]+'! —';qO.innerHTML='';qR.innerHTML=DESC[hk]+'<br><span style="font-weight:400;color:var(--mut);font-size:.9rem">۱۰ امتیاز برای خانهات ثبت شد</span>';
+    var r=document.createElement('button');r.className='opt';r.style.marginTop='12px';r.textContent='مراسم دوباره';r.onclick=function(){qi=0;sc=[0,0,0,0];show()};qO.appendChild(r);
+    var g=document.createElement('a');g.className='btn gold';g.style.marginTop='10px';g.href='wand.html';g.textContent='رفتن به اولیواندر';qO.appendChild(g);
+  }
+  show();
+})();
+</script></body></html>

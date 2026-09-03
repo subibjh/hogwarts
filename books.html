@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>کتابخانه | هاگوارتز</title><link rel="stylesheet" href="assets/style.css"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>.tl{position:relative;padding-right:30px}.tl:before{content:'';position:absolute;right:8px;top:0;bottom:0;width:2px;background:linear-gradient(var(--gold),var(--brd))}.book{position:relative;margin-bottom:18px;background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:20px 22px}.book:before{content:'';position:absolute;right:-27px;top:24px;width:12px;height:12px;border-radius:50%;background:var(--gold-lt);box-shadow:0 0 12px var(--gold-lt)}.book b{color:var(--gold-lt)}.yr{float:left;color:var(--mut);font-size:.82rem}</style></head><body><canvas id="stars"></canvas>
+<nav><a class="brand" href="index.html"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#E8C547" d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>هاگوارتز</a><div class="navlinks"><a href="index.html" class="keep">تالار</a><a href="sorting.html">گروهبندی</a><a href="wand.html">چوبدستی</a><a href="characters.html">شخصیتها</a><a href="spells.html">طلسمها</a><a href="books.html" class="on">کتابها</a><a href="greathall.html">جام</a><a href="events.html">رویدادها</a><span id="meBadge"></span></div></nav>
+<main><div class="wrap"><section class="block">
+<div class="sec-tag">THE LIBRARY</div><h2 class="sec-title">هفت سال، هفت کتاب</h2><p class="sec-desc">هر کدام ۴ امتیاز — پیشرفت: <b id="bprog" style="color:var(--gold-lt)"></b></p>
+<div class="tl" id="tl"></div>
+</section></div></main><footer><div class="en">MISCHIEF MANAGED</div></footer>
+<script src="assets/app.js"></script><script>
+(function(){
+  var B=[
+    {y:'1997',t:'۱. سنگ جادو',d:'آینه نفاقانگیز و شطرنج غولپیکر.'},
+    {y:'1998',t:'۲. تالار اسرار',d:'هیولای اسلیترین و شمشیر گریفیندور.'},
+    {y:'1999',t:'۳. زندانی آزکابان',d:'سیریوس بلک و پاترونوس.'},
+    {y:'2000',t:'۴. جام آتش',d:'هزارتو و بازگشت ولدمورت.'},
+    {y:'2003',t:'۵. محفل ققنوس',d:'ارتش دامبلدور و نبرد وزارت.'},
+    {y:'2005',t:'۶. شاهزاده دورگه',d:'راز جانپیچها و وداع دامبلدور.'},
+    {y:'2007',t:'۷. یادگاران مرگ',d:'نبرد نهایی هاگوارتز.'}
+  ];
+  if(!HW.S.read) HW.S.read=[];
+  var tl=document.getElementById('tl');
+  function prog(){document.getElementById('bprog').textContent=HW.S.read.length+' از '+B.length+' خوانده شده';}
+  B.forEach(function(b,i){
+    var d=document.createElement('div');d.className='book rv';
+    function paint(){
+      var done=HW.S.read.indexOf(i)>=0;
+      d.innerHTML='<span class="yr">'+b.y+'</span><b>'+b.t+'</b><p style="color:var(--mut);font-size:.92rem">'+b.d+'</p><button class="btn '+(done?'ghost':'gold')+'" style="padding:8px 22px;font-size:.86rem;margin-top:10px">'+(done?'خوانده شد':'خواندم — ۴ امتیاز')+'</button>';
+      d.querySelector('button').onclick=function(){if(HW.S.read.indexOf(i)>=0) return;HW.S.read.push(i);HW.save();if(HW.S.house) HW.award(HW.S.house,4,b.t);paint();prog();};
+    }
+    paint();tl.appendChild(d);
+  });
+  prog();
+})();
+</script></body></html>

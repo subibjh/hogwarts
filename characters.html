@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>تالار پرترهها | هاگوارتز</title><link rel="stylesheet" href="assets/style.css"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet"></head><body><canvas id="stars"></canvas>
+<nav><a class="brand" href="index.html"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#E8C547" d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>هاگوارتز</a><div class="navlinks"><a href="index.html" class="keep">تالار</a><a href="sorting.html">گروهبندی</a><a href="wand.html">چوبدستی</a><a href="characters.html" class="on">شخصیتها</a><a href="spells.html">طلسمها</a><a href="books.html">کتابها</a><a href="greathall.html">جام</a><a href="events.html">رویدادها</a><span id="meBadge"></span></div></nav>
+<main><div class="wrap"><section class="block">
+<div class="sec-tag">PORTRAITS HALL</div><h2 class="sec-title">پرترههای متحرک</h2><p class="sec-desc">قابها تکون میخورند — روی هر کدام بزن تا ۲ امتیاز برای خانهاش بگیری</p>
+<div class="grid g3" id="chars"></div>
+</section></div></main><footer><div class="en">MISCHIEF MANAGED</div></footer>
+<script src="assets/app.js"></script><script>
+(function(){
+  var C=[
+    {img:'img/harry.jpg',n:'هری پاتر',r:'پسری که زنده ماند — گریفیندور',d:'صاحب شنل نامرئیکننده.',h:'gryff'},
+    {img:'img/hermione.jpeg',n:'هرمیون گرنجر',r:'باهوشترین نسل — گریفیندور',d:'هیچ طلسمی از دستش در نمیرود.',h:'gryff'},
+    {img:'img/ron.jpg',n:'رون ویزلی',r:'وفادارترین دوست — گریفیندور',d:'استاد شطرنج جادویی.',h:'gryff'},
+    {img:'img/dumbledore.webp',n:'آلبوس دامبلدور',r:'مدیر هاگوارتز',d:'صاحب ابرچوبدستی.',h:'gryff'},
+    {img:'img/snape.jpg',n:'سوروس اسنیپ',r:'استاد معجونها — اسلیترین',d:'Always…',h:'slyth'},
+    {img:'img/voldemort.jpg',n:'لرد ولدمورت',r:'ارباب تاریکی — اسلیترین',d:'روح هفتتکه.',h:'slyth'}
+  ];
+  var g=document.getElementById('chars');
+  C.forEach(function(c){
+    var d=document.createElement('div');d.className='card rv';d.style.padding='0';d.style.overflow='hidden';d.style.cursor='pointer';
+    d.innerHTML='<div style="height:230px;overflow:hidden"><img src="'+c.img+'" alt="'+escHtml(c.n)+'" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block"></div><div style="padding:18px"><b>'+c.n+'</b><span style="color:var(--gold-lt);font-size:.82rem;display:block;margin:2px 0 6px">'+c.r+'</span><p style="color:var(--mut);font-size:.88rem">'+c.d+'</p></div>';
+    d.onmousemove=function(e){var r=d.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;d.style.transform='perspective(800px) rotateY('+(x*10)+'deg) rotateX('+(-y*10)+'deg) scale(1.02)'};d.onmouseleave=function(){d.style.transform=''};
+    d.onclick=function(){HW.award(c.h,2,c.n)};
+    g.appendChild(d);
+  });
+})();
+</script></body></html>

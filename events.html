@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>رویدادها | هاگوارتز</title><link rel="stylesheet" href="assets/style.css"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet"></head><body><canvas id="stars"></canvas>
+<nav><a class="brand" href="index.html"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#E8C547" d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>هاگوارتز</a><div class="navlinks"><a href="index.html" class="keep">تالار</a><a href="sorting.html">گروهبندی</a><a href="wand.html">چوبدستی</a><a href="characters.html">شخصیتها</a><a href="spells.html">طلسمها</a><a href="books.html">کتابها</a><a href="greathall.html">جام</a><a href="events.html" class="on">رویدادها</a><span id="meBadge"></span></div></nav>
+<main><div class="wrap"><section class="block">
+<div class="sec-tag">EVENTS</div><h2 class="sec-title">تقویم جادویی</h2><p class="sec-desc">بلیت رزرو کن — بلیتهای تو: <b id="tkCount" style="color:var(--gold-lt)"></b></p>
+<div class="grid g2" id="evs"></div>
+</section><section class="block"><div class="sec-tag">DAILY PROPHET</div><h2 class="sec-title">پیامآور روزانه</h2><div class="grid g3" id="news"></div></section></div></main><footer><div class="en">MISCHIEF MANAGED</div></footer>
+<script src="assets/app.js"></script><script>
+(function(){
+  if(!HW.need(!!HW.S.house,'اول گروهبندی شو')) return;
+  var EV=[
+    {id:'quidditch',t:'فینال کوییدیچ: گریفیندور — اسلیترین',d:'ورزشگاه هاگوارتز، جارچی: لی جردن. اسنیچ طلایی.',pts:8},
+    {id:'hogsmeade',t:'سفر هاگزمید',d:'آبجوسرای سهجارو و هانیدوکس. سال سوم به بالا.',pts:5},
+    {id:'triwizard',t:'آزمون جام سهجادوگر',d:'اژدها و هزارتو — جایگاه امن.',pts:10},
+    {id:'ball',t:'جشن کریسمس تالار',d:'لباس رسمی و رقص قهرمانان.',pts:6}
+  ];
+  var N=[
+    {t:'سیریوس دیده شد؟',d:'مشنگها سگی سیاه نزدیک هاگزمید دیدند. وزارت تکذیب کرد.'},
+    {t:'آذرخش جدید',d:'فروشگاه کوییدیچ مدل ۲۰۰۴ را با تخفیف آورد.'},
+    {t:'ه.ا.ج.ی',d:'هرمیون انجمن حقوق جنهای خانگی را ساخت. رون: غذا چی میشود؟'}
+  ];
+  var g=document.getElementById('evs');
+  function count(){document.getElementById('tkCount').textContent=HW.S.tickets.length+' بلیت'}
+  EV.forEach(function(e){
+    var d=document.createElement('div');d.className='card rv';
+    function paint(){
+      var has=HW.S.tickets.indexOf(e.id)>=0;
+      d.innerHTML='<h3>'+e.t+'</h3><p>'+e.d+'</p><div style="margin-top:12px;background:#0A0A0F;border:1px dashed var(--gold);border-radius:12px;padding:10px;font-size:.86rem"><b style="color:var(--gold-lt)">جایزه: '+e.pts+' امتیاز</b><br>به نام '+(escHtml(HW.S.name)||'جادوگر')+'</div><button class="btn '+(has?'ghost':'gold')+'" style="width:100%;margin-top:12px">'+(has?'رزرو شد':'رزرو بلیت')+'</button>';
+      d.querySelector('button').onclick=function(){if(HW.S.tickets.indexOf(e.id)>=0){HW.toast('قبلا رزرو کردی');return}HW.S.tickets.push(e.id);HW.save();if(HW.S.house) HW.award(HW.S.house,e.pts,'رزرو '+e.t);paint();count()};
+    }
+    paint();g.appendChild(d);
+  });
+  var nw=document.getElementById('news');
+  N.forEach(function(n){var d=document.createElement('div');d.className='card rv';d.innerHTML='<div class="sec-tag">خبر فوری</div><h3>'+n.t+'</h3><p>'+n.d+'</p>';nw.appendChild(d)});
+  count();
+})();
+</script></body></html>
