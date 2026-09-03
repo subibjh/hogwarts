@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>هاگوارتز — مدرسه جادوگری</title>
+<meta name="description" content="از هواپیما تا هاگوارتز — دقیق بر اساس هفت کتاب">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+#onboard{position:fixed;inset:0;z-index:120;background:radial-gradient(ellipse 78% 68% at 50% 18%,#1A1528 0%,#070814 64%);display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden}
+#onboard.done{pointer-events:none}
+.scene{display:none;max-width:560px;width:100%;text-align:center}
+.scene.on{display:block}
+.ticket{position:relative;background:linear-gradient(180deg,#F5EFE0 0%,#E8DDC0 100%);color:#1C1917;border-radius:22px;padding:28px 22px 22px;box-shadow:0 22px 60px rgba(0,0,0,.5),0 0 0 1px #C9A227 inset}
+.ticket:before{content:'HOGWARTS LETTER';position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:#C9A227;color:#0A0A0F;font-size:.66rem;letter-spacing:2px;padding:4px 14px;border-radius:999px;font-family:'Playfair Display',serif}
+.scene h2{font-size:1.5rem;color:#1C1917;margin:6px 0 4px}
+.scene .sub{color:#57534E;font-size:.9rem;margin-bottom:14px;text-align:center}
+.vis{height:128px;border-radius:14px;border:3px solid #1C1917;position:relative;overflow:hidden;margin:14px 0;background:#0A0A0F}
+.plane .vis{background:linear-gradient(180deg,#7FB3E6 0%,#B9D9F5 48%,#EAF6FF 100%)}
+.plane .vis:before{content:'';position:absolute;left:0;top:0;bottom:0;width:16px;background:linear-gradient(180deg,#E5E7EB,#9CA3AF);border-right:2px solid #1C1917;z-index:2}
+.cloud{position:absolute;background:radial-gradient(ellipse at 30% 30%,#fff 0%,#F3F4F6 70%,#E5E7EB 100%);border-radius:50%;opacity:.88}
+.wall .vis{background:repeating-linear-gradient(0deg,transparent 0 18px,rgba(0,0,0,.14) 18px 20px),repeating-linear-gradient(90deg,#C9A47A 0 38px,#A67C52 38px 40px),linear-gradient(180deg,#8B5A2B,#5A3315)}
+.wall .vis:before{content:'PLATFORM 9¾';position:absolute;top:9px;left:50%;transform:translateX(-50%);background:#0A0A0F;color:#E8C547;font-size:.6rem;letter-spacing:2px;padding:3px 10px;border-radius:6px;font-family:'Playfair Display',serif;z-index:2;border:1px solid #2E2A26}
+.trolley{position:absolute;top:50%;left:30%;transform:translate(-50%,-50%)}
+.train .vis{background:linear-gradient(180deg,#A8C49A 0%,#6E9E5D 36%,#2D5016 70%,#0F1F0A 100%)}
+.lake .vis{background:linear-gradient(180deg,#0B1220 0%,#123055 52%,#050814 100%);display:flex;align-items:end;justify-content:center;padding-bottom:18px}
+.castle{font-family:'Playfair Display',serif;letter-spacing:6px;color:#E8C547;text-shadow:0 0 14px #E8C547;font-size:1.16rem;position:relative;z-index:1}
+#skip{position:absolute;top:14px;left:14px;z-index:3;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:7px 14px;font-family:inherit;font-size:.76rem;cursor:pointer;backdrop-filter:blur(8px)}
+.spark{position:absolute;width:4px;height:4px;background:radial-gradient(circle,#fff 0%,#E8C547 60%,transparent 75%);border-radius:50%;pointer-events:none}
+.lantern{position:absolute;width:6px;height:10px;background:radial-gradient(ellipse at 50% 30%,#FFF7CC,#E8C547);border-radius:4px;box-shadow:0 0 8px #E8C547}
+@media(prefers-reduced-motion:reduce){.cloud,.trolley{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<nav>
+<a class="brand" href="index.html"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#E8C547" d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>هاگوارتز</a>
+<div class="navlinks">
+<a href="index.html" class="on keep">تالار</a><a href="sorting.html">گروهبندی</a><a href="wand.html">چوبدستی</a><a href="characters.html">شخصیتها</a><a href="spells.html">طلسمها</a><a href="books.html">کتابها</a><a href="greathall.html">جام</a><a href="events.html">رویدادها</a>
+<span id="meBadge"></span>
+</div>
+</nav>
+
+<div id="onboard">
+<button id="skip">رد شدن</button>
+
+<div class="scene on plane" id="s0">
+<div class="ticket">
+<h2>نامه هاگوارتز</h2>
+<p class="sub">«ما خرسندیم به اطلاع برسانیم...» — جغد نامه را آورد. اول به لندن.</p>
+<div class="vis"><div class="cloud" data-c style="width:72px;height:28px;top:22px;left:40px"></div><div class="cloud" data-c style="width:54px;height:22px;top:62px;left:140px"></div><div class="cloud" data-c style="width:88px;height:32px;top:46px;left:250px"></div></div>
+<div class="field"><label>نام جادوگری</label><input id="obName" maxlength="30" placeholder="مثلاً: آریا بلک"></div>
+<div class="field"><label>مبدا</label><select id="obCity"><option>تهران</option><option>اصفهان</option><option>مشهد</option><option>تبریز</option><option>شیراز</option><option>دبی</option><option>استانبول</option></select></div>
+<div style="background:#0A0A0F;color:#E8C547;border-radius:12px;padding:10px 14px;font-size:.84rem;display:flex;justify-content:space-between;margin-top:8px"><span>HW1881</span><span id="obRoute">→ London Heathrow</span></div>
+<button class="btn gold" id="b0" style="width:100%;margin-top:12px">پرواز به لندن</button>
+</div>
+</div>
+
+<div class="scene" id="s1">
+<div class="ticket">
+<h2>هیترو — لندن</h2>
+<p class="sub" id="s1sub">مه رقیق، تاکسی سیاه و بیگبن دور دست</p>
+<div class="vis" style="background:linear-gradient(180deg,#8A9098 0%,#B8BDC4 46%,#6B7280 100%);display:flex;align-items:end;justify-content:center"><div style="width:70px;height:70px;background:#0A0A0F;clip-path:polygon(42% 0,58% 0,58% 30%,70% 30%,70% 100%,30% 100%,30% 30%,42% 30%);opacity:.9;margin-bottom:18px"></div></div>
+<p style="color:#57534E;font-size:.86rem">راننده: «کینگز کراس — ده دقیقه»</p>
+<button class="btn gold" id="b1" style="width:100%">به ایستگاه</button>
+</div>
+</div>
+
+<div class="scene wall" id="s2">
+<div class="ticket">
+<h2>سکوی نه و سهچهارم</h2>
+<p class="sub">دیوار بین سکو ۹ و ۱۰ — کتاب اول، فصل ششم: باید بدوی</p>
+<div class="vis" id="wallStage"><div class="trolley" id="trolley"><svg width="60" height="40" viewBox="0 0 60 40"><rect x="8" y="18" width="36" height="14" rx="3" fill="#57534E" stroke="#0A0A0F" stroke-width="1.5"/><circle cx="16" cy="34" r="4.5" fill="#0A0A0F"/><circle cx="34" cy="34" r="4.5" fill="#0A0A0F"/><rect x="20" y="8" width="15" height="14" rx="2" fill="#8B5A2B" stroke="#0A0A0F" stroke-width="1.2"/></svg></div></div>
+<p style="color:#57534E;font-size:.86rem">چشم ببند و بدو — مثل هری و رون</p>
+<button class="btn gold" id="b2" style="width:100%">رد شدن از دیوار</button>
+</div>
+</div>
+
+<div class="scene train" id="s3">
+<div class="ticket">
+<h2>هاگوارتز اکسپرس — ۱۱:۰۰</h2>
+<p class="sub">قطار بخار قرمز، کوپهها و جعبه شکلات قورباغهای</p>
+<div class="vis" id="trainStage"><div style="position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(180deg,#2D5016,#0F1F0A)"></div></div>
+<p style="color:#57534E;font-size:.86rem">«چند دقیقه تا هاگزمید»</p>
+<button class="btn gold" id="b3" style="width:100%">پیاده شدن</button>
+</div>
+</div>
+
+<div class="scene lake" id="s4">
+<div class="ticket">
+<h2>دریاچه سیاه</h2>
+<p class="sub">کتاب اول: قایقها خودشان میرانند — قلعه با پنجرههای روشن</p>
+<div class="vis"><div class="lantern" style="left:30%;top:22px"></div><div class="lantern" style="left:62%;top:30px"></div><div class="castle">HOGWARTS</div></div>
+<p style="color:#57534E;font-size:.86rem" id="s4txt">هاگرید: «نگاه کنید — اولین نگاه به هاگوارتز»</p>
+<button class="btn gold" id="b4" style="width:100%">وارد تالار بزرگ شو</button>
+</div>
+</div>
+
+</div>
+
+<main>
+<header class="hero">
+<div style="opacity:.9"><svg width="64" height="64" viewBox="0 0 24 24"><path fill="#E8C547" d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></div>
+<h1 id="typeTitle"></h1>
+<p class="sub">هفت کتاب — دقیق، کتابمحور، بدون چیز من درآوردی.</p>
+<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px"><a class="btn gold" href="sorting.html">کلاه گروهبندی</a><a class="btn ghost" href="greathall.html">تالار بزرگ</a></div>
+</header>
+<div class="wrap">
+<section class="block" id="journey">
+<div class="sec-tag">YOUR JOURNEY</div><h2 class="sec-title">نقشه سفر — کتابمحور</h2><p class="sec-desc">قدمها فقط از کتاب — امتیاز فقط سر کلاس</p>
+<div class="grid g2" id="jmap"></div>
+<div class="quizbox" id="regBox" style="margin-top:18px;max-width:540px"><h3>طومار</h3><div class="field"><input id="regName" maxlength="30" placeholder="نام جادوگری"></div><button class="btn gold" id="regBtn" style="width:100%">ثبت</button></div>
+</section>
+<section class="block" id="houses"><div class="sec-tag">HOUSES</div><h2 class="sec-title">چهار خانه</h2><div class="grid g4" id="houseGrid"></div></section>
+</div>
+</main>
+<footer><div class="en">MISCHIEF MANAGED — BY THE BOOK</div></footer>
+<script src="assets/app.js"></script>
+<script>
+(function(){
+  var TT='هاگوارتز — دقیق از روی کتاب';var te=document.getElementById('typeTitle'),i=0;(function t(){if(i<=TT.length){te.textContent=TT.slice(0,i++);setTimeout(t,70)}})();
+  var SH={gryff:['#7F1D1D','#D4A017','G','#E8C547'],slyth:['#0F3A24','#9CA3AF','S','#E5E7EB'],raven:['#1A2F5A','#B45309','R','#E8C547'],huff:['#8B6914','#0A0A0F','H','#0A0A0F']};
+  function shield(k){var s=SH[k];return '<svg width="68" height="74" viewBox="0 0 64 70"><path d="M32 3 L57 11 V33 C57 49 46 58 32 67 C18 58 7 49 7 33 V11 Z" fill="'+s[0]+'" stroke="'+s[1]+'" stroke-width="2.4"/><text x="32" y="43" text-anchor="middle" font-family="Playfair Display,serif" font-size="26" font-weight="900" fill="'+s[3]+'">'+s[2]+'</text></svg>';}
+  function renderHouses(){var g=document.getElementById('houseGrid');if(!g)return;g.innerHTML='';HW.leader().forEach(function(h){var a=document.createElement('a');a.className='door '+h.k+' rv vis';a.href='sorting.html';a.innerHTML='<div class="crest">'+shield(h.k)+'</div><h3 style="margin-top:10px">'+h.n+'</h3><span class="pts">'+h.p+' امتیاز</span>';g.appendChild(a);});}
+  function renderJourney(){var m=document.getElementById('jmap');if(!m)return;m.innerHTML='';HW.steps().forEach(function(s,idx){var prev=idx===0||HW.steps()[idx-1].done;var st=s.done?'done':(prev?'now':'lock');var d=document.createElement(s.done||prev?'a':'div');d.className='card jstep '+st+' rv vis';if(s.done||prev)d.href=s.href;var tag=s.done?'کامل شد':(prev?'قدم فعلی':'قفل');d.innerHTML='<div class="sec-tag">'+tag+'</div><h3>'+s.t+'</h3><p>'+s.d+'</p>';m.appendChild(d);});var b=document.getElementById('regBox');if(b) b.style.display=HW.S.name?'none':'';}
+  var onboard=document.getElementById('onboard');
+  function show(n){document.querySelectorAll('.scene').forEach(function(s){s.classList.remove('on')});var t=document.getElementById('s'+n);if(t){t.classList.add('on');gsap.fromTo(t,{opacity:0,y:10},{opacity:1,y:0,duration:.45,ease:'power2.out'})}}
+  function finish(){HW.S.onboarded=true;HW.save();gsap.to(onboard,{opacity:0,duration:.5,onComplete:function(){onboard.style.display='none';document.body.style.overflow=''}});HW.toast('خوش آمدی به هاگوارتز');}
+  // subtle animations only
+  function startPlane(){
+    document.querySelectorAll('[data-c]').forEach(function(c,i){
+      gsap.set(c,{x:0});
+      gsap.to(c,{x:-30,duration:14+Math.random()*6,repeat:-1,yoyo:true,ease:'sine.inOut',delay:i*.6});
+    });
+  }
+  document.getElementById('skip').onclick=finish;
+  document.getElementById('obCity').onchange=function(){document.getElementById('obRoute').textContent=this.value+' → London';};
+  document.getElementById('b0').onclick=function(){var v=document.getElementById('obName').value.trim();if(v.length<2){HW.toast('نام را بنویس');return}HW.S.name=v;HW.save();HW.renderBadge();document.getElementById('s1sub')?.replaceChildren(document.createTextNode(v+' — تاکسی منتظر است'));show(1);};
+  document.getElementById('b1').onclick=function(){show(2);};
+  document.getElementById('b2').onclick=function(){
+    var t=document.getElementById('trolley');
+    // subtle sparkles
+    var stage=document.getElementById('wallStage');
+    for(var k=0;k<8;k++){var s=document.createElement('div');s.className='spark';s.style.left=(38+Math.random()*24)+'%';s.style.top=(44+Math.random()*22)+'%';stage.appendChild(s);gsap.fromTo(s,{opacity:0,scale:.7},{opacity:1,scale:1,duration:.2,delay:k*.07});gsap.to(s,{y:-18-Math.random()*12,x:(Math.random()-.5)*18,opacity:0,duration:.8,delay:k*.07+.3,onComplete:(function(el){return function(){el.remove()}})(s)});}
+    gsap.to(t,{x:110,opacity:.2,duration:.9,ease:'power2.inOut'});
+    gsap.to('#s2 .vis',{filter:'brightness(1.15)',duration:.2,yoyo:true,repeat:1});
+    setTimeout(function(){show(3);},1000);
+  };
+  document.getElementById('b3').onclick=function(){show(4);};
+  document.getElementById('b4').onclick=finish;
+  document.addEventListener('DOMContentLoaded',function(){
+    if(HW.S.onboarded){onboard.style.display='none';} else { if(HW.S.name) document.getElementById('obName').value=HW.S.name; show(0); startPlane(); document.body.style.overflow='hidden'; }
+    renderHouses();renderJourney();
+    var rb=document.getElementById('regBtn'); if(rb) rb.onclick=function(){var v=document.getElementById('regName').value.trim();if(v.length<2){HW.toast('نام را بنویس');return}HW.S.name=v;HW.save();HW.renderBadge();document.getElementById('regBox').style.display='none';renderJourney();};
+    gsap.to('.lantern',{y:-6,duration:3.2,yoyo:true,repeat:-1,ease:'sine.inOut',stagger:.5});
+  });
+})();
+</script>
+</body>
+</html>

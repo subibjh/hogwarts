@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>کلاس طلسمها | هاگوارتز</title><link rel="stylesheet" href="assets/style.css"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet"></head><body><canvas id="stars"></canvas>
+<nav><a class="brand" href="index.html"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#E8C547" d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>هاگوارتز</a><div class="navlinks"><a href="index.html" class="keep">تالار</a><a href="sorting.html">گروهبندی</a><a href="wand.html">چوبدستی</a><a href="characters.html">شخصیتها</a><a href="spells.html" class="on">طلسمها</a><a href="books.html">کتابها</a><a href="greathall.html">جام</a><a href="events.html">رویدادها</a><span id="meBadge"></span></div></nav>
+<main><div class="wrap"><section class="block"><div class="sec-tag">CHARMS — کتابمحور</div><h2 class="sec-title">کلاس فلیتویک — طلسمهای کتاب</h2><p class="sec-desc">هر طلسم با تلفظ دقیق کتاب — اولین اجرا ۳ امتیاز — پیشرفت: <b id="prog" style="color:var(--gold-lt)"></b></p><div class="grid g4" id="spells"></div></section></div></main><footer><div class="en">MISCHIEF MANAGED</div></footer>
+<script src="assets/app.js"></script><script>
+(function(){
+  if(!HW.need(!!(HW.S.wand&&HW.S.patronus),'اول چوبدستی')) return;
+  var SP=[
+    {l:'Expecto Patronum',n:'پاترونوس',d:'کتاب ۳ — دفاع دیوانهساز'},
+    {l:'Expelliarmus',n:'اکسپلیارموس',d:'کتاب ۲ — خلع سلاح'},
+    {l:'Lumos',n:'لوموس',d:'کتاب ۱ — نور چوبدستی'},
+    {l:'Wingardium Leviosa',n:'ویناردیوم',d:'کتاب ۱ — شناوری'},
+    {l:'Alohomora',n:'الوهومورا',d:'کتاب ۱ — باز کردن قفل'},
+    {l:'Protego',n:'پروتگو',d:'سپر'},
+    {l:'Incendio',n:'اینسندیو',d:'آتش'},
+    {l:'Riddikulus',n:'ریدیکولوس',d:'کتاب ۳ — بوگارت'},
+    {l:'Stupefy',n:'استاپیفای',d:'بیهوشی'},
+    {l:'Petrificus Totalus',n:'پتریفیکوس',d:'خشک کردن'},
+    {l:'Obliviate',n:'ابلیوییت',d:'پاکسازی حافظه'},
+    {l:'Avada Kedavra',n:'آوادا کداورا',d:'نفرین ممنوعه — امتیاز نمیدهد'}
+  ];
+  if(!HW.S.cast) HW.S.cast=[];
+  var g=document.getElementById('spells');
+  function prog(){document.getElementById('prog').textContent=HW.S.cast.length+' از '+SP.length}
+  SP.forEach(function(s){
+    var d=document.createElement('div');d.className='card rv';d.style.textAlign='center';d.style.cursor='pointer';
+    function paint(){var done=HW.S.cast.indexOf(s.l)>=0;d.style.borderColor=done?'var(--gold)':'';d.innerHTML='<span style="font-family:Playfair Display,serif;font-style:italic;color:var(--gold-lt)">'+s.l+'</span><br><b>'+s.n+'</b><br><small style="color:var(--mut)">'+s.d+'</small>'+(done?'<br><small style="color:var(--gold-lt)">آموخته شد</small>':'')}
+    paint();
+    d.onclick=function(){HW.flash();if(s.l==='Avada Kedavra'){HW.toast('ممنوعه!');return}HW.toast(s.l);if(HW.S.cast.indexOf(s.l)<0){HW.S.cast.push(s.l);HW.save();if(HW.S.house) HW.award(HW.S.house,3,s.n);paint();prog()}};
+    g.appendChild(d);
+  });prog();
+})();
+</script></body></html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>اولیواندر | هاگوارتز</title><link rel="stylesheet" href="assets/style.css"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet"></head><body><canvas id="stars"></canvas>
+<nav><a class="brand" href="index.html"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#E8C547" d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>هاگوارتز</a><div class="navlinks"><a href="index.html" class="keep">تالار</a><a href="sorting.html">گروهبندی</a><a href="wand.html" class="on">چوبدستی</a><a href="characters.html">شخصیتها</a><a href="spells.html">طلسمها</a><a href="books.html">کتابها</a><a href="greathall.html">جام</a><a href="events.html">رویدادها</a><span id="meBadge"></span></div></nav>
+<main><div class="wrap"><section class="block"><div class="sec-tag">OLLIVANDERS — کتاب اول</div><h2 class="sec-title">چوب تو را انتخاب میکند</h2><p class="sec-desc">بر اساس کتاب: هالی و ققنوس برای هری، تاک و ... — اولیواندر میگوید «چوب، جادوگر را انتخاب میکند»</p>
+<div class="grid g2">
+<div class="quizbox"><div class="sec-tag" id="wStep"></div><h3 id="wQ"></h3><div class="opts" id="wOpts"></div><div class="qres" id="wRes"></div></div>
+<div class="quizbox"><div class="sec-tag">پاترونوس — کتاب سوم</div><h3 id="pQ"></h3><div class="opts" id="pOpts"></div><div class="qres" id="pRes"></div></div>
+</div></section></div></main><footer><div class="en">MISCHIEF MANAGED</div></footer>
+<script src="assets/app.js"></script><script>
+(function(){
+  if(!HW.need(!!HW.S.house,'اول گروهبندی شو')) return;
+  var WQ=[
+    {q:'کدام قفسه؟',o:[['هالی، تاکسوس، بلوط',['هالی','تاکسوس','بلوط']],['افرا، بید، گیلاس',['افرا','بید','گیلاس']],['گردو، آبنوس، سرخدار',['گردو','آبنوس','سرخدار']]]},
+    {q:'حس دست روی چوب؟',o:[['گرمای تند',['پر ققنوس']],['خنک و سوزن سوزن',['مو تکشاخ']],['ضربان سنگین',['قلب اژدها']]]},
+    {q:'تکان میدهی؟',o:[['جرقه طلایی',['۲۸ سانتی','انعطافپذیر']],['نسیم',['۳۱ سانتی','متعادل']],['رعد آرام',['۳۴ سانتی','سرسخت']]]}
+  ];
+  var wi=0,wood='',core='',len='';
+  var wStep=document.getElementById('wStep'),wQ=document.getElementById('wQ'),wO=document.getElementById('wOpts'),wR=document.getElementById('wRes');
+  function wShow(){wR.textContent='';wStep.textContent='سؤال '+(wi+1)+' از ۳';wQ.textContent=WQ[wi].q;wO.innerHTML='';WQ[wi].o.forEach(function(op){var b=document.createElement('button');b.className='opt';b.textContent=op[0];b.onclick=function(){if(wi===0)wood=op[1][Math.floor(Math.random()*op[1].length)];if(wi===1)core=op[1][0];if(wi===2)len=op[1][0]+' ـ '+op[1][1];wi++;if(wi<WQ.length)wShow();else wFinish()};wO.appendChild(b)});}
+  function wFinish(){wStep.textContent='اولیواندر:';wQ.textContent='«جالب...»';wO.innerHTML='';HW.S.wand={wood:wood,core:core,len:len};HW.save();wR.textContent='چوب '+wood+'، مغز '+core+'، '+len;if(HW.S.house) HW.award(HW.S.house,5,'چوبدستی');}
+  var PQ=[{q:'شادترین خاطره؟',o:[['پرواز',['گوزن']],['خنده دوستان',['سگ']],['نامه',['جغد']],['جنگل',['گرگ']]]},{q:'مقابل دیوانهساز؟',o:[['صبح',['اسب']],['ققنوس',['ققنوس']],['آغوش',['خرس']],['ستاره',['پلنگ']]]}];
+  var pi=0,votes={};var pQ=document.getElementById('pQ'),pO=document.getElementById('pOpts'),pR=document.getElementById('pRes');
+  function pShow(){pR.textContent='';pQ.textContent='سؤال '+(pi+1)+' از ۲: '+PQ[pi].q;pO.innerHTML='';PQ[pi].o.forEach(function(op){var b=document.createElement('button');b.className='opt';b.textContent=op[0];b.onclick=function(){votes[op[1]]=(votes[op[1]]||0)+1;pi++;if(pi<PQ.length)pShow();else pFinish()};pO.appendChild(b)});}
+  function pFinish(){var best='',n=0;for(var k in votes) if(votes[k]>n){n=votes[k];best=k} pQ.textContent='اکسپکتو پاترونوم!';pO.innerHTML='';HW.S.patronus=best;HW.save();pR.textContent='پاترونوس: '+best;HW.flash();if(HW.S.house) HW.award(HW.S.house,5,'پاترونوس');}
+  wShow();pShow();
+})();
+</script></body></html>

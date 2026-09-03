@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>کلاه گروهبندی | هاگوارتز</title><link rel="stylesheet" href="assets/style.css"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet"></head><body><canvas id="stars"></canvas>
+<nav><a class="brand" href="index.html"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#E8C547" d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>هاگوارتز</a><div class="navlinks"><a href="index.html" class="keep">تالار</a><a href="sorting.html" class="on">گروهبندی</a><a href="wand.html">چوبدستی</a><a href="characters.html">شخصیتها</a><a href="spells.html">طلسمها</a><a href="books.html">کتابها</a><a href="greathall.html">جام</a><a href="events.html">رویدادها</a><span id="meBadge"></span></div></nav>
+<main><div class="wrap"><section class="block" style="text-align:center"><div class="sec-tag">THE SORTING HAT — کتاب اول، فصل هفتم</div><h2 class="sec-title">کلاه گروهبندی</h2><p class="sec-desc" style="margin:0 auto 18px">«من کلاهی هستم باهوش...» — ۸ سؤال از کتاب، بدون چیز اضافی</p>
+<div class="quizbox" id="quiz"><div class="sec-tag" id="qStep"></div><h3 id="qQ"></h3><div class="opts" id="qOpts"></div><div class="bar"><i id="qBar" style="width:0%"></i></div><div class="qres" id="qRes"></div></div></section></div></main><footer><div class="en">MISCHIEF MANAGED — BY THE BOOK</div></footer>
+<script src="assets/app.js"></script><script>
+(function(){
+  if(!HW.need(!!HW.S.name,'اول نامت را ثبت کن')) return;
+  var Q=[
+    {q:'در راهروی هاگوارتز صدایی میآید؟',o:[['مستقیم میروم',3,0,0,0],['نقشه را چک میکنم',0,1,3,0],['دوستانم را صدا میکنم',1,0,0,3],['پنهانی دنبال میکنم',0,3,1,0]]},
+    {q:'کدام کتاب را اول برمیداری؟',o:[['تاریخ جادو',0,0,3,1],['معجونهای پیشرفته',0,3,1,0],['جانوران شگفتانگیز',0,0,1,3],['دفاع در برابر جادوی سیاه',3,0,0,0]]},
+    {q:'آینه نفاقانگیز چه نشان میدهد؟',o:[['افتخار',2,2,0,0],['دانایی بیکران',0,1,3,0],['خانواده سالم',1,0,0,3],['قدرت',0,3,0,0]]},
+    {q:'کدام استاد را تحسین میکنی؟',o:[['مکگوناگل',3,0,1,0],['اسنیپ',0,3,1,0],['فلیتویک',0,0,3,0],['اسپروت',0,0,1,3]]},
+    {q:'در تالار، کجا مینشینی؟',o:[['کنار شجاعان',3,0,0,0],['کنار جاهطلبان',0,3,0,0],['کنار دانایان',0,0,3,0],['کنار وفاداران',0,0,0,3]]},
+    {q:'بزرگترین ترس؟',o:[['ترسیدن و جا زدن',3,0,0,1],['شکست از حریف باهوشتر',0,2,3,0],['تنهایی',1,0,1,3],['قدرت نداشتن',0,3,0,0]]},
+    {q:'حیوان همراه؟',o:[['شیر',3,0,0,0],['مار',0,3,0,0],['عقاب',0,0,3,0],['گورکن',0,0,0,3]]},
+    {q:'کلاه میپرسد: کجا؟',o:[['گریفیندور',3,0,0,0],['اسلیترین',0,3,0,0],['ریونکلا',0,0,3,0],['هافلپاف',0,0,0,3]]}
+  ];
+  var DESC={gryff:'شجاعت — «جایی که دلیران میدرخشند»',slyth:'جاهطلبی — «اسلیترین تو را بزرگ میکند»',raven:'خرد — «ریونکلا دانایان»',huff:'وفاداری — «هافلپاف وفاداران»'};
+  var qi=0,sc=[0,0,0,0],qStep=document.getElementById('qStep'),qQ=document.getElementById('qQ'),qO=document.getElementById('qOpts'),qR=document.getElementById('qRes'),qBar=document.getElementById('qBar');
+  function show(){qR.textContent='';qStep.textContent='سؤال '+(qi+1)+' از '+Q.length;qBar.style.width=Math.round(qi/Q.length*100)+'%';qQ.textContent=Q[qi].q;qO.innerHTML='';Q[qi].o.forEach(function(op){var b=document.createElement('button');b.className='opt';b.textContent=op[0];b.onclick=function(){for(var i=0;i<4;i++)sc[i]+=op[i+1];qi++;if(qi<Q.length)show();else finish()};qO.appendChild(b)});}
+  function finish(){qBar.style.width='100%';var w=0;for(var i=1;i<4;i++)if(sc[i]>sc[w])w=i;var hk=['gryff','slyth','raven','huff'][w];var first=!HW.S.house;HW.S.house=hk;HW.save();HW.renderBadge();if(first) HW.award(hk,10,'گروهبندی');qStep.textContent='کلاه فریاد میزند';qQ.textContent='— '+HW.HOUSES[hk]+'! —';qO.innerHTML='';qR.innerHTML=DESC[hk];var r=document.createElement('button');r.className='opt';r.style.marginTop='12px';r.textContent='دوباره';r.onclick=function(){qi=0;sc=[0,0,0,0];show()};qO.appendChild(r);}
+  show();
+})();
+</script></body></html>
