@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بازی سهبعدی هاگوارتز — تالار بزرگ</title>
+<link rel="stylesheet" href="assets/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@700;900&display=swap" rel="stylesheet">
+<style>
+#gameWrap{position:fixed;inset:0;top:48px;background:#020208}
+#ui{position:fixed;top:58px;right:12px;z-index:5;background:rgba(10,10,15,.82);border:1px solid #2E2A26;border-radius:14px;padding:10px 14px;color:#F5EFE0;font-size:.84rem;backdrop-filter:blur(8px)}
+#cross{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:18px;height:18px;pointer-events:none;z-index:5}
+#cross:before,#cross:after{content:'';position:absolute;background:rgba(232,197,71,.9);box-shadow:0 0 6px #E8C547}
+#cross:before{left:8px;top:0;width:2px;height:18px}#cross:after{left:0;top:8px;width:18px;height:2px}
+#hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:5;background:rgba(10,10,15,.82);border:1px solid #2E2A26;border-radius:999px;padding:8px 16px;color:#9A9590;font-size:.8rem}
+#blocker{position:fixed;inset:0;top:48px;background:radial-gradient(ellipse 70% 60% at 50% 30%,rgba(10,10,15,.45),rgba(2,2,8,.88));display:flex;align-items:center;justify-content:center;z-index:6;cursor:pointer}
+#blocker div{background:linear-gradient(180deg,#F5EFE0,#E8DDC0);color:#0A0A0F;border-radius:18px;padding:22px 20px;max-width:420px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.6);border:1px solid #C9A227}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<nav><a class="brand" href="index.html"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#E8C547" d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>هاگوارتز — بازی سهبعدی</a><div class="navlinks"><a href="index.html" class="keep">تالار</a><a href="game.html" class="on">بازی سهبعدی</a><span id="meBadge"></span></div></nav>
+<div id="gameWrap"></div>
+<div id="ui">تالار بزرگ — WASD حرکت، موس نگاه، کلیک طلسم <span id="houseTxt" style="color:#E8C547"></span></div>
+<div id="cross"></div>
+<div id="hint">کلیک برای قفل موس — ESC خروج</div>
+<div id="blocker"><div><h3 style="font-family:Playfair Display,serif;margin-bottom:6px">وارد تالار بزرگ شدی</h3><p style="color:#57534E;font-size:.9rem;line-height:1.7">تالار با سقف جادویی و شمعهای معلق — کلیک کن تا وارد شوی، با WASD راه برو، با کلیک لوموس بزن</p><p style="margin-top:12px;background:#0A0A0F;color:#E8C547;border-radius:10px;padding:8px;font-size:.82rem">کلیک برای شروع</p></div></div>
+<script src="assets/app.js"></script>
+<script type="module">
+import * as THREE from 'three';
+import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+
+const wrap=document.getElementById('gameWrap');
+const scene=new THREE.Scene();
+scene.fog=new THREE.Fog(0x0A0A0F, 14, 58);
+scene.background=new THREE.Color(0x070814);
+
+const camera=new THREE.PerspectiveCamera(72, innerWidth/(innerHeight-48), 0.1, 100);
+camera.position.set(0,1.7,10);
+
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));
+renderer.setSize(innerWidth, innerHeight-48);
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+wrap.appendChild(renderer.domElement);
+
+// lights - enchanted ceiling + candles
+scene.add(new THREE.HemisphereLight(0xE8C547, 0x0A0A0F, 0.55));
+const dir=new THREE.DirectionalLight(0xFFF7CC, 0.9);
+dir.position.set(8,18,6);
+dir.castShadow=true;
+dir.shadow.mapSize.set(1024,1024);
+scene.add(dir);
+
+// floor - stone
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(60,60), new THREE.MeshStandardMaterial({color:0x2A2622, roughness:0.92, metalness:0.06}));
+floor.rotation.x=-Math.PI/2;
+floor.receiveShadow=true;
+scene.add(floor);
+
+// walls - stone
+function wall(w,h,x,z,ry){
+  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,0.8), new THREE.MeshStandardMaterial({color:0x1E1B18, roughness:0.94}));
+  m.position.set(x,h/2,z);
+  m.rotation.y=ry;
+  m.receiveShadow=true;
+  scene.add(m);
+  return m;
+}
+wall(60,12,0,-14,0);
+wall(60,12,0,14,0);
+wall(28,12,-14,0,Math.PI/2);
+wall(28,12,14,0,Math.PI/2);
+
+// house tables (4 long tables)
+const tableColors=[0x7F1D1D,0x0F3A24,0x1A2F5A,0x8B6914];
+for(let i=0;i<4;i++){
+  const t=new THREE.Mesh(new THREE.BoxGeometry(2.2,0.7,10), new THREE.MeshStandardMaterial({color:0x3A2A1A, roughness:0.82}));
+  t.position.set(-6 + i*4, 0.35, 0);
+  t.castShadow=true; t.receiveShadow=true;
+  scene.add(t);
+  // bench
+  const b1=new THREE.Mesh(new THREE.BoxGeometry(1.6,0.35,9), new THREE.MeshStandardMaterial({color:0x2A1D12}));
+  b1.position.set(-6+i*4-1.4,0.18,0); scene.add(b1);
+  const b2=b1.clone(); b2.position.x=-6+i*4+1.4; scene.add(b2);
+  // banner
+  const banner=new THREE.Mesh(new THREE.PlaneGeometry(1.2,1.6), new THREE.MeshStandardMaterial({color:tableColors[i], side:THREE.DoubleSide}));
+  banner.position.set(-6+i*4, 5.5, -13.5);
+  scene.add(banner);
+}
+
+// floating candles - book accurate: hundreds floating
+const candles=[];
+for(let i=0;i<28;i++){
+  const x=(Math.random()-0.5)*22, z=(Math.random()-0.5)*18, y=4.5+Math.random()*1.8;
+  const wick=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.07,0.45,8), new THREE.MeshStandardMaterial({color:0xF5EFE0}));
+  wick.position.set(x,y,z);
+  wick.castShadow=true;
+  scene.add(wick);
+  const flame=new THREE.Mesh(new THREE.SphereGeometry(0.09,8,8), new THREE.MeshBasicMaterial({color:0xFFF7CC}));
+  flame.position.set(x,y+0.32,z);
+  scene.add(flame);
+  const light=new THREE.PointLight(0xFFD27A, 0.9, 7);
+  light.position.set(x,y+0.32,z);
+  scene.add(light);
+  candles.push({wick,flame,light,baseY:y,ph:Math.random()*6});
+}
+
+// enchanted ceiling stars (points)
+const starGeo=new THREE.BufferGeometry();
+const starPos=new Float32Array(600);
+for(let i=0;i<200;i++){ starPos[i*3]=(Math.random()-0.5)*50; starPos[i*3+1]= 9+Math.random()*4; starPos[i*3+2]=(Math.random()-0.5)*40; }
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos,3));
+const stars=new THREE.Points(starGeo, new THREE.PointsMaterial({color:0xE8C547,size:0.08,sizeAttenuation:true,transparent:true,opacity:0.85}));
+scene.add(stars);
+
+// controls
+const controls=new PointerLockControls(camera, document.body);
+const blocker=document.getElementById('blocker');
+blocker.addEventListener('click',()=>controls.lock());
+controls.addEventListener('lock',()=>{blocker.style.display='none'});
+controls.addEventListener('unlock',()=>{blocker.style.display='flex'});
+
+const keys={};
+addEventListener('keydown',e=>keys[e.code]=true);
+addEventListener('keyup',e=>keys[e.code]=false);
+
+// spell casting - Lumos
+const spellGroup=new THREE.Group(); scene.add(spellGroup);
+function cast(){
+  // flash
+  const flash=new THREE.PointLight(0xE8C547, 6, 12);
+  flash.position.copy(camera.position);
+  scene.add(flash);
+  setTimeout(()=>scene.remove(flash),120);
+  // projectile
+  const p=new THREE.Mesh(new THREE.SphereGeometry(0.08,10,10), new THREE.MeshBasicMaterial({color:0xE8C547}));
+  p.position.copy(camera.position);
+  const dir=new THREE.Vector3(); camera.getWorldDirection(dir);
+  p.userData={v:dir.multiplyScalar(0.55),life:60};
+  spellGroup.add(p);
+  // house points for first cast of day? subtle
+  if(HW.S.house && !HW.S._castToday){
+    HW.S._castToday=true; HW.save();
+    HW.award(HW.S.house,2,'لوموس سهبعدی');
+  }
+  const el=document.getElementById('houseTxt');
+  if(HW.S.house) el.textContent=' — '+HW.HOUSES[HW.S.house];
+}
+addEventListener('click',()=>{ if(controls.isLocked) cast(); });
+
+// movement
+let prev=performance.now();
+function animate(){
+  requestAnimationFrame(animate);
+  const now=performance.now(), dt=Math.min((now-prev)/1000,0.05); prev=now;
+
+  if(controls.isLocked){
+    const speed=4.2*dt;
+    if(keys['KeyW']) controls.moveForward(speed);
+    if(keys['KeyS']) controls.moveForward(-speed);
+    if(keys['KeyA']) controls.moveRight(-speed);
+    if(keys['KeyD']) controls.moveRight(speed);
+    // clamp inside hall
+    camera.position.x=Math.max(-12,Math.min(12,camera.position.x));
+    camera.position.z=Math.max(-11,Math.min(11,camera.position.z));
+  }
+
+  // candle flicker
+  const t=now*0.001;
+  candles.forEach(c=>{
+    const f=0.85+Math.sin(t*3 + c.ph)*0.15 + Math.random()*0.06;
+    c.light.intensity=0.7*f;
+    c.flame.scale.setScalar(0.9+f*0.2);
+    c.wick.position.y=c.baseY + Math.sin(t*0.9 + c.ph)*0.04;
+    c.flame.position.y=c.wick.position.y+0.32;
+    c.light.position.y=c.flame.position.y;
+  });
+
+  // spells
+  for(let i=spellGroup.children.length-1;i>=0;i--){
+    const p=spellGroup.children[i];
+    p.position.add(p.userData.v);
+    p.userData.life--;
+    p.material.opacity=Math.max(0,p.userData.life/60);
+    p.material.transparent=true;
+    if(p.userData.life<=0) spellGroup.remove(p);
+  }
+
+  renderer.render(scene,camera);
+}
+animate();
+
+addEventListener('resize',()=>{
+  camera.aspect=innerWidth/(innerHeight-48);
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight-48);
+});
+
+// badge
+if(HW.S.house) document.getElementById('houseTxt').textContent=' — '+HW.HOUSES[HW.S.house];
+</script>
+</body>
+</html>
